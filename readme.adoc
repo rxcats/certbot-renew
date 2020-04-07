@@ -1,0 +1,33 @@
+= Certbot renew scheduler app
+
+== gradle build
+[source]
+----
+./gradlew clean build
+----
+
+== prepare systemctl service configuration
+
+./etc/systemd/system/certbot-renew.service
+[source]
+----
+[Unit]
+Description=certbot-renew
+After=network.target
+
+[Service]
+User=ubuntu
+ExecStart=/bin/bash -c "exec java -Dspring.profiles.active=prod -jar /home/ubuntu/certbot-renew/certbot-renew-1.0.0.jar"
+SuccessExitStatus=143
+WorkingDirectory=/home/ubuntu/certbot-renew
+
+[Install]
+WantedBy=multi-user.target
+----
+
+.enable systemctl service
+[source]
+----
+sudo systemctl enable certbot-renew.service
+sudo systemctl start certbot-renew.service
+----
